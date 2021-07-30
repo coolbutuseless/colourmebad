@@ -1,10 +1,10 @@
 Package: colourmebad
 Type: Package
-Title: Tools for Helping Match Colours with Pronouncable Words
+Title: Tools for Helping Match Colours with Pronounceable Words
 Version: 0.1.0
 Author: mikefc
 Maintainer: mikefc <mikefc@coolbutuseless.com>
-Description: Tools for helping match colours with pronouncable words.
+Description: Tools for helping match colours with pronounceable words.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -8,7 +8,7 @@
 ![](https://img.shields.io/badge/cool-useless-green.svg)
 <!-- badges: end -->
 
-`colourmebad` provides some tools for finding pronouncable
+`colourmebad` provides some tools for finding pronounceable
 approximations to hex colours.
 
 These tools will be handy if you ever have to memorise a set of hex
@@ -38,7 +38,7 @@ This package was inspired by [mdsumner](https://twitter.com/mdsumner)’s
         substitutions are performed e.g. replay all letter-o with
         number-0 etc.
     -   `nonsense_words` hex colours which could almost be read as a
-        pronouncable word but with a very high probability of being
+        pronounceable word but with a very high probability of being
         nonsense/gibberish. e.g. `#elesta`
 
 ## Installation
@@ -104,7 +104,7 @@ colourmebad::show_palette(cols)
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-## Hex colours which are probably nonsense words but may be pronouncable
+## Hex colours which are probably nonsense words but may be pronounceable
 
 ``` r
 cols <- sample(nonsense_words, 25)
@@ -124,7 +124,7 @@ colourmebad::show_palette(cols)
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-## Creating a pronouncable palette similar to a reference palette
+## Creating a pronounceable palette similar to a reference palette
 
 ``` r
 ref <- RColorBrewer::brewer.pal(8, 'Dark2')
@@ -135,29 +135,29 @@ colourmebad::show_palette(ref, labels = ref, title = "Reference Palette")
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ``` r
-pronouncable <- colourmebad::find_best_colour_match(ref, colour_words_with_substitutions)
-colourmebad::compare_palettes(ref, pronouncable, "ColorBrewer Dark2", "Words with digit/letter substitutions")
+pronounceable <- colourmebad::find_best_colour_match(ref, colour_words_with_substitutions)
+colourmebad::compare_palettes(ref, pronounceable, "ColorBrewer Dark2", "Words with digit/letter substitutions")
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
-## Creating a pronouncable nonsense palette similar to a reference palette
+## Creating a pronounceable nonsense palette similar to a reference palette
 
 ``` r
-pronouncable <- colourmebad::find_best_colour_match(ref, nonsense_words)
-colourmebad::compare_palettes(ref, pronouncable, "ColorBrewer Dark2", "Nonsense words")
+pronounceable <- colourmebad::find_best_colour_match(ref, nonsense_words)
+colourmebad::compare_palettes(ref, pronounceable, "ColorBrewer Dark2", "Nonsense words")
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
-## Creating a pronouncable Spanish palette similar to a reference palette
+## Creating a pronounceable Spanish palette similar to a reference palette
 
 ``` r
 # http://ftp.icm.edu.pl/packages/wordlists/spanish/
 spanish_words_with_substitutions <- system('grep -i -E "^[abcdeflsotgz]{6}$" ./working/spanish.txt', intern = TRUE)
 cols <- colourmebad::words_to_colours(spanish_words_with_substitutions)
-pronouncable_spanish <- colourmebad::find_best_colour_match(ref, cols)
-colourmebad::compare_palettes(ref, pronouncable_spanish, "ColorBrewer Dark2", "Spanish words")
+pronounceable_spanish <- colourmebad::find_best_colour_match(ref, cols)
+colourmebad::compare_palettes(ref, pronounceable_spanish, "ColorBrewer Dark2", "Spanish words")
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
