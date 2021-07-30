@@ -1,0 +1,223 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+library(colourmebad)
+set.seed(1)
+```
+
+# colourmebad <img src="man/figures/logo.png" align="right" height="430/"/>
+
+<!-- badges: start -->
+![](https://img.shields.io/badge/cool-useless-green.svg)
+<!-- badges: end -->
+
+`colourmebad` provides some tools for finding pronouncable approximations to hex colours.
+
+These tools will be handy if you ever have to memorise a set of hex colours, 
+or would like to impress people with your recall of a good colour palette as
+a party trick.  In summary - no one needs these tools.
+
+This package was inspired by [mdsumner](https://twitter.com/mdsumner)'s 
+[hexwords](https://github.com/mdsumner/hexwords) package.  
+
+### What's in the box
+
+* `find_best_colour_match()` For each of the reference 
+  colours supplied, this function will find the best match amongst a list of
+  candidate colours.  Where 'best match' is defined as the shortest euclidean
+  distance in [Lab](https://en.wikipedia.org/wiki/Lab_color_space) colourspace.
+* `colours_to_words()` and `words_to_colours()` to use some digit/letter substitutions
+  and convert a 6-letter word into a hex colour and vice versa
+* `show_palette()` to display a single set of colours
+* `compare_palettes()` to show 2 palettes side-by-side
+* Included colour lists
+    * `colour_words` hex colours which are directly readable as dictionary words
+    * `colour_words_with_substitutions` hex colours which can be converted to 
+      dictionary words if certain digit/letter substitutions are performed 
+      e.g. replay all letter-o with number-0 etc.
+    * `nonsense_words` hex colours which could almost be read as a pronouncable
+      word but with a very high probability of being nonsense/gibberish. 
+      e.g. `#elesta`
+
+
+## Installation
+
+You can install from [GitHub](https://github.com/coolbutuseless/colourmebad) with:
+
+``` r
+# install.package('remotes')
+remotes::install_github('coolbutuseless/colourmebad')
+```
+
+## Hex colours which are dictionary words
+
+```{r}
+library(colourmebad)
+
+colour_words
+colourmebad::colours_to_words(colour_words)
+
+colourmebad::show_palette(colour_words)
+```
+
+
+## Hex colours which are dictionary words if you allow for some digit-letter subsitutions
+
+In the great tradition of "hacker speak" and customised number plates for cars,
+digits can be used in place of letters if they look similar enough.
+
+The default substitutions this package employs:
+
+* `0` = `o`
+* `1` = `l` (lower case L)
+* `2` = `z`
+* `5` = `s`
+* `7` = `t`
+* `9` = `g`
+
+```{r}
+cols <- sample(colour_words_with_substitutions, 25)
+cols
+
+colourmebad::colours_to_words(cols)
+colourmebad::show_palette(cols)
+```
+
+
+
+## Hex colours which are probably nonsense words but may be pronouncable
+
+```{r}
+cols <- sample(nonsense_words, 25)
+cols
+
+colourmebad::colours_to_words(cols)
+colourmebad::show_palette(cols)
+```
+
+
+## Creating a pronouncable palette similar to a reference palette
+
+```{r}
+ref <- RColorBrewer::brewer.pal(8, 'Dark2')
+
+colourmebad::show_palette(ref, labels = ref, title = "Reference Palette")
+```
+
+```{r}
+pronouncable <- colourmebad::find_best_colour_match(ref, colour_words_with_substitutions)
+colourmebad::compare_palettes(ref, pronouncable, "ColorBrewer Dark2", "Words with digit/letter substitutions")
+```
+
+
+
+
+## Creating a pronouncable nonsense palette similar to a reference palette
+
+
+```{r}
+pronouncable <- colourmebad::find_best_colour_match(ref, nonsense_words)
+colourmebad::compare_palettes(ref, pronouncable, "ColorBrewer Dark2", "Nonsense words")
+```
+
+
+## Creating a pronouncable Spanish palette similar to a reference palette
+
+```{r}
+# http://ftp.icm.edu.pl/packages/wordlists/spanish/
+spanish_words_with_substitutions <- system('grep -i -E "^[abcdeflsotgz]{6}$" ./working/spanish.txt', intern = TRUE)
+cols <- colourmebad::words_to_colours(spanish_words_with_substitutions)
+pronouncable_spanish <- colourmebad::find_best_colour_match(ref, cols)
+colourmebad::compare_palettes(ref, pronouncable_spanish, "ColorBrewer Dark2", "Spanish words")
+```
+
+
+
+
+
+```{r eval = FALSE, echo=FALSE}
+library(grid)
+library(ingrid)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Parameters for a hex
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+r     <- 100
+theta <- seq(30, 360, 60) * pi/180 
+x     <- r * cos(theta)
+y     <- r * sin(theta)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# a hex polygon
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hex <- polygon_grob(x, y, fill = 'black')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Create an image maskeed by the hex
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+jpg <- jpeg::readJPEG("./man/figures/cmb.jpg")
+image <- raster_grob(
+  image  = jpg, 
+  x      = .mm(0),
+  y      = .mm(6),
+  width  = .mm(1.8 * r), 
+  height = .mm(1.8 * r),
+  mask   = hex
+)
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Position text
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# text <- text_grob(
+#   label      = 'ingrid',
+#   x          =  0.25 * r,
+#   y          = -0.75 * r, 
+#   rot        = 30,
+#   just       = 0,
+#   col        = 'white', 
+#   fontfamily = 'courier',
+#   cex        = 4
+# )
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Draw the objects
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+grid::grid.newpage()
+grid::grid.draw(image)
+# grid::grid.draw(text)
+
+
+png("./man/figures/logo.png", type = 'cairo', width = 600, height = 600, bg = 'transparent')
+grid::grid.newpage()
+grid::grid.draw(hex)
+grid::grid.draw(image)
+# grid::grid.draw(text)
+invisible(dev.off())
+```
+
+
+
+
+
+
+## Related Software
+
+* [hexwords](https://github.com/mdsumner/hexwords)
+
+## Acknowledgements
+
+* R Core for developing and maintaining the language.
+* CRAN maintainers, for patiently shepherding packages onto CRAN and maintaining
+  the repository
